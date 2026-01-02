@@ -1,0 +1,6 @@
+pyspark==3.5.0 #Spark 3.5 is more stable than 4.1 for linux+windows users
+pandas
+numpy
+sqlalchemy
+psycopg2-binary
+json
