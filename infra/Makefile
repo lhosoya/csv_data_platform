@@ -1,8 +1,10 @@
-.PHONY: help deploy-all helm-add-repos deploy-minio deploy-kafka deploy-airflow delete-all port-forward status logs clean
+.PHONY: help deploy-all helm-add-repos deploy-minio deploy-kafka deploy-airflow delete-all port-forward status logs clean docker-kafka-up docker-kafka-down docker-kafka-logs docker-kafka-ps
 
 NAMESPACE ?= default
 HELM := helm
 KUBECTL := kubectl
+DOCKER_COMPOSE := docker-compose
+DOCKER_COMPOSE_FILE := ../docker-compose-kafka-standalone.yml
 
 # Helm repository URLs
 MINIO_REPO := https://charts.min.io/
@@ -11,17 +13,21 @@ AIRFLOW_REPO := https://airflow.apache.org
 
 help:
 	@echo "Available targets:"
-	@echo "  make helm-add-repos   - Add Helm repositories"
-	@echo "  make deploy-all       - Deploy all services (ZooKeeper, Kafka, MinIO, Airflow)"
-	@echo "  make deploy-minio     - Deploy MinIO via Helm"
-	@echo "  make deploy-airflow   - Deploy Airflow via Helm"
-	@echo "  make delete-all       - Delete all Helm releases"
-	@echo "  make port-forward     - Port forward services for local access"
-	@echo "  make status           - Check status of all releases"
-	@echo "  make logs             - View logs from pods"
-	@echo "  make clean            - Delete all resources"
+	@echo "  make helm-add-repos      - Add Helm repositories"
+	@echo "  make deploy-all          - Deploy all services (ZooKeeper, Kafka, MinIO, Airflow)"
+	@echo "  make deploy-minio        - Deploy MinIO via Helm"
+	@echo "  make deploy-airflow      - Deploy Airflow via Helm"
+	@echo "  make delete-all          - Delete all Helm releases"
+	@echo "  make port-forward        - Port forward services for local access"
+	@echo "  make status              - Check status of all releases"
+	@echo "  make logs                - View logs from pods"
+	@echo "  make clean               - Delete all resources"
+	@echo "  make docker-kafka-up     - Start standalone Kafka in Docker"
+	@echo "  make docker-kafka-down   - Stop standalone Kafka in Docker"
+	@echo "  make docker-kafka-ps     - Show status of Docker Kafka containers"
+	@echo "  make docker-kafka-logs   - View Docker Kafka logs"
 
-deploy-all: helm-add-repos deploy-minio deploy-airflow
+deploy-all: helm-add-repos deploy-minio deploy-airflow docker-kafka-up
 	@echo "✓ All services deployed successfully!"
 
 helm-add-repos:
@@ -40,26 +46,20 @@ deploy-minio: helm-add-repos
 		--set persistence.enabled=true \
 		--set mode=standalone \
 		--set rootUser=admin,rootPassword=admin123 \
-		minio minio/minio
+		minio minio/minio \
 	@echo "✓ MinIO deployed"
 
 deploy-airflow: helm-add-repos
 	@echo "Deploying Airflow via Helm..."
-	$(HELM) upgrade --install airflow apache-airflow/airflow \
-		--namespace=$(NAMESPACE) \
-		--create-namespace \
-		--set airflowVersion=3.0.6 \
-		--set executor=LocalExecutor \
-		--set postgresql.enabled=true \
-		--set postgresql.auth.username=airflow \
-		--set postgresql.auth.password=airflow \
-		--set postgresql.auth.database=airflow \
+	$(HELM) upgrade --install airflow apache-airflow/airflow --namespace airflow --create-namespace \
+		--set postgresql.image.repository=bitnami/postgresql \
+		--set postgresql.image.tag=latest \
 		--wait
 	@echo "✓ Airflow deployed"
 
 delete-all:
 	@echo "Deleting all Helm releases..."
-	$(HELM) uninstall airflow --namespace=$(NAMESPACE) --ignore-not-found
+	$(HELM) uninstall airflow --namespace=airflow --ignore-not-found
 	$(HELM) uninstall minio --namespace=$(NAMESPACE) --ignore-not-found
 	@echo "✓ All releases uninstalled"
 
@@ -96,7 +96,28 @@ port-forward:
 	@$(KUBECTL) port-forward -n $(NAMESPACE) svc/airflow-webserver 8080:8080 &
 	@wait
 
-clean: delete-all
+clean: delete-all docker-kafka-down
 	@echo "Cleanup complete!"
+
+# Docker Compose Kafka Standalone targets
+docker-kafka-up:
+	@echo "Starting standalone Kafka in Docker..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) up -d
+	@echo "✓ Kafka started successfully!"
+	@echo "  Kafka external access: localhost:9094"
+	@echo "  ZooKeeper: localhost:2181"
+
+docker-kafka-down:
+	@echo "Stopping standalone Kafka in Docker..."
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) down
+	@echo "✓ Kafka stopped"
+
+docker-kafka-ps:
+	@echo "=== Docker Kafka Status ==="
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) ps
+
+docker-kafka-logs:
+	@echo "=== Docker Kafka Logs ==="
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE_FILE) logs -f
 
 .DEFAULT_GOAL := help
