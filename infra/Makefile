@@ -26,6 +26,7 @@ help:
 	@echo "  make docker-kafka-down   - Stop standalone Kafka in Docker"
 	@echo "  make docker-kafka-ps     - Show status of Docker Kafka containers"
 	@echo "  make docker-kafka-logs   - View Docker Kafka logs"
+	@echo "  make config-minio		  - Configure MinIO buckets and policies"
 
 deploy-all: helm-add-repos deploy-minio deploy-airflow docker-kafka-up
 	@echo "✓ All services deployed successfully!"
@@ -38,6 +39,10 @@ helm-add-repos:
 	$(HELM) repo update
 	@echo "✓ Helm repositories added"
 
+
+# Create k8s minio deployment
+# Get the deployment name and access to retrieve secrets kubectl get pods --namespace default -l "release=minio" -o jsonpath="{.items[0].metadata.name}"
+# Use either powershell or unix, git bash does not support /bin/bash or /bin/sh
 deploy-minio: helm-add-repos
 	@echo "Deploying MinIO via Helm..."
 	$(HELM) install --namespace $(NAMESPACE) \
@@ -46,8 +51,16 @@ deploy-minio: helm-add-repos
 		--set persistence.enabled=true \
 		--set mode=standalone \
 		--set rootUser=admin,rootPassword=admin123 \
-		minio minio/minio \
+		minio minio/minio --wait
 	@echo "✓ MinIO deployed"
+
+configure-minio:
+	@echo "Configuring MinIO buckets and policies..."
+	@POD_NAME=$$(kubectl get pods --namespace default -l 'release=minio' -o jsonpath='{.items[0].metadata.name}'); \
+	echo "Using Pod: $$POD_NAME"; \
+	kubectl exec -n default -ti "$$POD_NAME" -- /bin/bash -c "mc alias set myminio http://localhost:9000 admin admin123"; \
+	kubectl exec -n default -ti "$$POD_NAME" -- /bin/bash -c "mc admin accesskey create myminio admin --access-key acceskey123 --secret-key secretkey123";
+	@echo "✓ MinIO configured"
 
 deploy-airflow: helm-add-repos
 	@echo "Deploying Airflow via Helm..."
@@ -92,7 +105,7 @@ port-forward:
 	@echo "  Airflow: http://localhost:8080"
 	@echo "Press Ctrl+C to stop port forwarding"
 	@$(KUBECTL) port-forward -n $(NAMESPACE) svc/minio 9000:9000 &
-	@$(KUBECTL) port-forward -n $(NAMESPACE) svc/minio 9001:9001 &
+	@$(KUBECTL) port-forward -n $(NAMESPACE) svc/minio-console 9001:9001 &
 	@$(KUBECTL) port-forward -n $(NAMESPACE) svc/airflow-webserver 8080:8080 &
 	@wait
 
