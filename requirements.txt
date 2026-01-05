@@ -4,3 +4,13 @@ numpy
 sqlalchemy
 psycopg2-binary
 json
+
+create schema if not exists minio_catalog.test
+
+
+create table testme as SELECT *
+FROM deltaLake(
+    'http://minio:9000/raw/sample_events_delta',
+    'minio',
+    'minio123'
+);

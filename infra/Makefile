@@ -4,23 +4,33 @@ NAMESPACE ?= default
 HELM := helm
 KUBECTL := kubectl
 DOCKER_COMPOSE := docker-compose
-DOCKER_COMPOSE_FILE := ../docker-compose-kafka-standalone.yml
+
+
+
+
 
 # Helm repository URLs
 MINIO_REPO := https://charts.min.io/
 BITNAMI_REPO := https://charts.bitnami.com/bitnami
 AIRFLOW_REPO := https://airflow.apache.org
+TRINO_REPO := https://trinodb.github.io/charts
 
 help:
 	@echo "Available targets:"
 	@echo "  make helm-add-repos      - Add Helm repositories"
 	@echo "  make deploy-all          - Deploy all services (ZooKeeper, Kafka, MinIO, Airflow)"
 	@echo "  make deploy-minio        - Deploy MinIO via Helm"
+	@echo "  make deploy-hive         - Deploy Hive Metastore via Helm"
+	@echo "  make deploy-trino        - Deploy Trino via Helm (with Hive and MinIO integration)"
 	@echo "  make deploy-airflow      - Deploy Airflow via Helm"
 	@echo "  make delete-all          - Delete all Helm releases"
 	@echo "  make port-forward        - Port forward services for local access"
 	@echo "  make status              - Check status of all releases"
 	@echo "  make logs                - View logs from pods"
+	@echo "  make docker-metabase-up  - Start Metabase in Docker"
+	@echo "  make docker-metabase-down- Stop Metabase in Docker"
+	@echo "  make docker-metabase-ps  - Show status of Docker Metabase container"
+	@echo "  make docker-metabase-logs- View Docker Metabase logs"
 	@echo "  make clean               - Delete all resources"
 	@echo "  make docker-kafka-up     - Start standalone Kafka in Docker"
 	@echo "  make docker-kafka-down   - Stop standalone Kafka in Docker"
@@ -36,6 +46,19 @@ helm-add-repos:
 	$(HELM) repo add minio $(MINIO_REPO) --force-update
 	$(HELM) repo add bitnami $(BITNAMI_REPO) --force-update
 	$(HELM) repo add apache-airflow $(AIRFLOW_REPO) --force-update
+	$(HELM) repo add trino $(TRINO_REPO) --force-update
+
+# Deploy Hive Metastore to Kubernetes
+deploy-hive: helm-add-repos
+	@echo "Deploying Hive Metastore via Helm..."
+	$(HELM) upgrade --install hive-metastore bitnami/hive --namespace default --create-namespace --set hiveMetastore.enabled=true --set hiveServer.enabled=false --set hiveMetastore.ports.tcp=9083 --wait
+	@echo "✓ Hive Metastore deployed"
+
+# Deploy Trino to Kubernetes with Hive and MinIO integration
+deploy-trino: helm-add-repos
+	@echo "Deploying Trino via Helm..."
+	$(HELM) upgrade --install trino trino/trino --namespace default --create-namespace --values ../trino-values.yaml --wait
+	@echo "✓ Trino deployed"
 	$(HELM) repo update
 	@echo "✓ Helm repositories added"
 
@@ -111,6 +134,26 @@ port-forward:
 
 clean: delete-all docker-kafka-down
 	@echo "Cleanup complete!"
+
+# Docker Compose Metabase Standalone targets
+docker-metabase-up:
+	@echo "Starting Metabase in Docker..."
+	docker-compose -f $(DOCKER_COMPOSE_METABASE_FILE) up -d
+	@echo "✓ Metabase started successfully!"
+	@echo "  Metabase: http://localhost:3000"
+
+docker-metabase-down:
+	@echo "Stopping Metabase in Docker..."
+	docker-compose -f $(DOCKER_COMPOSE_METABASE_FILE) down
+	@echo "✓ Metabase stopped"
+
+docker-metabase-ps:
+	@echo "=== Docker Metabase Status ==="
+	docker-compose -f $(DOCKER_COMPOSE_METABASE_FILE) ps
+
+docker-metabase-logs:
+	@echo "=== Docker Metabase Logs ==="
+	docker-compose -f $(DOCKER_COMPOSE_METABASE_FILE) logs -f
 
 # Docker Compose Kafka Standalone targets
 docker-kafka-up:

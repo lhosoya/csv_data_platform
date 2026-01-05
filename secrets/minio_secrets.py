@@ -1,3 +1,3 @@
-MINIO_ACCESS_KEY = "accesskeyfortest"
-MINIO_SECRET_KEY = "secretkeyfortest"
-MINIO_USER = "testuser"
+MINIO_ACCESS_KEY = "892W4ARU5FV3IHER2QXB"
+MINIO_SECRET_KEY = "fDIePUxrBAe7yPJEUbIHrLeHWCNzT29tuH4wpWd4"
+MINIO_USER = "console"

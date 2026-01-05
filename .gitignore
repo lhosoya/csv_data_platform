@@ -1,0 +1,4 @@
+# Ignore utility folder
+utility/*
+./utility
+utility/
