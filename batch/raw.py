@@ -28,6 +28,15 @@ spark = (
 )
 # %%
 
+# create table if not exists delta_raw.events_csv as 
+# select * FROM deltaLake(
+#     'http://minio:9000/raw/delta_warehouse/events_delta',
+#     'minio',
+#     'minio123'
+# );
+
+
+
 df = spark.read.csv(
 	"s3a://landing/sample_events.csv",
 	header=True,
