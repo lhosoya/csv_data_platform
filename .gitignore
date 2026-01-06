@@ -2,3 +2,6 @@
 utility/*
 ./utility
 utility/
+
+
+# use git add -u to stage changes to tracked files only

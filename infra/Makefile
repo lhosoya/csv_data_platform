@@ -48,20 +48,6 @@ helm-add-repos:
 	$(HELM) repo add apache-airflow $(AIRFLOW_REPO) --force-update
 	$(HELM) repo add trino $(TRINO_REPO) --force-update
 
-# Deploy Hive Metastore to Kubernetes
-deploy-hive: helm-add-repos
-	@echo "Deploying Hive Metastore via Helm..."
-	$(HELM) upgrade --install hive-metastore bitnami/hive --namespace default --create-namespace --set hiveMetastore.enabled=true --set hiveServer.enabled=false --set hiveMetastore.ports.tcp=9083 --wait
-	@echo "✓ Hive Metastore deployed"
-
-# Deploy Trino to Kubernetes with Hive and MinIO integration
-deploy-trino: helm-add-repos
-	@echo "Deploying Trino via Helm..."
-	$(HELM) upgrade --install trino trino/trino --namespace default --create-namespace --values ../trino-values.yaml --wait
-	@echo "✓ Trino deployed"
-	$(HELM) repo update
-	@echo "✓ Helm repositories added"
-
 
 # Create k8s minio deployment
 # Get the deployment name and access to retrieve secrets kubectl get pods --namespace default -l "release=minio" -o jsonpath="{.items[0].metadata.name}"

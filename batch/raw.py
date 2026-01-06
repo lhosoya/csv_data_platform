@@ -23,6 +23,7 @@ spark = (
 	.config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
 	.config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
 	.config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+    .config("spark.sql.warehouse.dir", "s3a://raw/delta_warehouse")
 	.getOrCreate()
 )
 # %%
@@ -34,6 +35,12 @@ df = spark.read.csv(
 )
 # %%
 df.count()
+# Create a Delta table in the warehouse
+df.write.format("delta").mode("overwrite").saveAsTable("events_delta")
 # %%
 df.write.format("delta").save("s3a://raw/sample_events_delta")
+# %%
+spark.sql("select 1+2").show(5,False)
+# %%
+spark.sql("SHOW DATABASES").show(5,False)
 # %%
