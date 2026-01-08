@@ -18,9 +18,15 @@ Design a scalable and reliable data platform architecture for a SaaS application
     - `event_id` (string, unique if present)
     - `user_id` (string/int)
     - `event_type` (enum: `signup|trial_started|subscription_started|subscription_canceled`)
+        > Can have more enums:
+        >> signoff/signout -> account "deleted"
+        >> trial ended
+        >> trial canceled
     - `event_ts` (ISO timestamp)
     - `plan_id` (nullable)
     - `amount` (nullable)
+        > Plan_id is related to amount
+        >> A way to improve over the time whether the amount is higher, could get less subscriptions/cancelled.
     - `source` (utm/source, nullable).
 
 ** if a column you need is missing, state your **assumption** and proceed.*
@@ -35,6 +41,7 @@ Design a scalable and reliable data platform architecture for a SaaS application
     
     - Call out **batch vs. streaming** (and why).
     - Mention **orchestration**, **lineage**, **observability**, and **cost guards** (e.g., partitioning, file formats).
+    > ZSTD, ZOrder Timestamp
 2. **Modeling the Data**
     
     Using the dataset provided (`sample_events.csv`):
@@ -57,8 +64,11 @@ Design a scalable and reliable data platform architecture for a SaaS application
     Briefly define:
     
     - **Tests** you’d enforce (e.g., not null, uniqueness, referential checks, accepted values).
+    > Related to user having the same subscription within a period of the same product.
     - **SLIs/SLOs** (e.g., data freshness, pipeline success rate).
+    > Always up-to-date data, what is the tolerance level for this kind of data.
     - **Alerting** (what triggers, who gets pinged, where).
+    > Alerts dashboard, add a grafana? Alert late event, past a SLA; Alert resub?
 4. **Scalability & Tradeoffs**
     - How you’d evolve from 1M/day → **10M/day**:
         - Storage format/partitioning, compute patterns, concurrency limits.
@@ -66,6 +76,7 @@ Design a scalable and reliable data platform architecture for a SaaS application
 5. **Full Load vs. Incremental Loads**
     - Design for **full reloads** and **incremental/delta** updates.
     - How you **detect and reconcile** late/corrected events (e.g., watermarking, upserts/MERGE, SCD types, idempotency keys).
+    > With SLAs
 6. **SQL Challenge – Continuous Subscription Periods**
     
     Using the dataset provided (`sample_events.csv`):

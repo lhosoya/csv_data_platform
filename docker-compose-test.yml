@@ -29,7 +29,7 @@ services:
       - CLICKHOUSE_PASSWORD=default
     volumes:
       - clickhouse-data:/var/lib/clickhouse
-      - ./clickhouse-s3.xml:/etc/clickhouse-server/config.d/s3.xml:ro
+      #- ./clickhouse-s3.xml:/etc/clickhouse-server/config.d/s3.xml:ro
       # - ./clickhouse-logs:/var/log/clickhouse-server # Activate if you want to see logs on your repo
       - ./infra/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
     networks:
@@ -58,7 +58,7 @@ services:
       - "3000:3000"
     volumes:
       - metabase-data:/metabase-data
-      - ./metabase-plugins:/plugins
+      #- ./metabase-plugins:/plugins
     environment:
       MB_DB_TYPE: mysql
       MB_DB_DBNAME: metabase

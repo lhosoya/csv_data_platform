@@ -16,7 +16,7 @@ spark = (
 	.config("spark.hadoop.fs.s3a.endpoint", "http://localhost:9000")
 	.config(
 		"spark.jars.packages",
-		"org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262,io.delta:delta-spark_2.12:3.1.0"
+		"org.apache.hadoop:hadoop-aws:3.3.4,com.amazonaws:aws-java-sdk-bundle:1.12.262,io.delta:delta-spark_2.12:3.1.0,org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.0,org.apache.kafka:kafka-clients:3.4.0"
 	)
 	.config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
 	.config("spark.hadoop.fs.s3a.path.style.access", "true")

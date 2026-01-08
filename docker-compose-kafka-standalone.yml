@@ -13,12 +13,19 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
+    deploy:
+      resources:
+        limits:
+          cpus: '4.00'
+          memory: 14G
     depends_on:
       - zookeeper
     ports:
       - "9092:9092"      # Internal listener
       - "9094:9094"      # External listener
     environment:
+      KAFKA_LOG_RETENTION_MS: 3600000
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9094
