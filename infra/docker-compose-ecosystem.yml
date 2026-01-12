@@ -31,7 +31,7 @@ services:
       - clickhouse-data:/var/lib/clickhouse
       #- ./clickhouse-s3.xml:/etc/clickhouse-server/config.d/s3.xml:ro
       # - ./clickhouse-logs:/var/log/clickhouse-server # Activate if you want to see logs on your repo
-      - ./infra/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+      - ./users.xml:/etc/clickhouse-server/users.d/users.xml:ro
     networks:
       - trino-network
 

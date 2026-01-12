@@ -23,7 +23,7 @@ spark = (
 	.config("spark.hadoop.fs.s3a.connection.ssl.enabled", "false")
 	.config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
 	.config("spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog")
-    .config("spark.sql.warehouse.dir", "s3a://raw/delta_warehouse")
+    .config("spark.sql.warehouse.dir", "s3a://lakehouse/delta_warehouse")
 	.getOrCreate()
 )
 # %%
@@ -42,6 +42,9 @@ df = spark.read.csv(
 	header=True,
 	inferSchema=True
 )
+
+#%%
+df.show(5,False)
 # %%
 df.count()
 # Create a Delta table in the warehouse
