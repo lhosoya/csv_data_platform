@@ -23,7 +23,7 @@ create-minio-buckets:
 	docker exec -i minio mc alias set myminio http://localhost:9000 minio minio123
 	docker exec -i minio mc mb -p myminio/landing || true
 	docker exec -i minio mc mb -p myminio/lakehouse || true
-	docker cp data/sample_events.csv minio:/tmp/sample_events.csv
+	docker cp ../data/sample_events.csv minio:/tmp/sample_events.csv
 	docker exec -i minio mc cp /tmp/sample_events.csv myminio/landing/sample_events.csv
 
 # Deploy and bring up Airflow
