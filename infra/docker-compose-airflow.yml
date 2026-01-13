@@ -125,6 +125,8 @@ services:
     
 
   airflow-webserver:
+    hostname: airflow-webserver
+    container_name: airflow-webserver
     <<: *airflow-common
     command: webserver
     ports:

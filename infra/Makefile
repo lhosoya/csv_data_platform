@@ -1,3 +1,4 @@
+# Makefile for managing the deployment of Case services
 # Build a docker image for Airflow 2.9.3 with the necessary dependencies with JAVA and PySpark
 build-docker:
 	docker build -t myairflow:latest .
@@ -7,16 +8,20 @@ deploy-ecosystem-airflow-buckets:
 	make deploy-ecosystem
 	make deploy-airflow
 	make create-minio-buckets
+	make deploy-clickhouse
+	make airflow-clickhouse-connection
 
 # Shutdown of the deployed services
 down-ecosystem-airflow:
 	make down-airflow
 	make down-ecosystem
+	make down-clickhouse
 
 # Shutdown and cleans all of the deployed services and volumes
 down-all:
 	make down-airflow-volumes
 	make down-ecosystem-volumes
+	make down-clickhouse-volumes
 
 # Post-exec of minio to create the necessary buckets and upload sample data
 create-minio-buckets:
@@ -25,6 +30,10 @@ create-minio-buckets:
 	docker exec -i minio mc mb -p myminio/lakehouse || true
 	docker cp ../data/sample_events.csv minio:/tmp/sample_events.csv
 	docker exec -i minio mc cp /tmp/sample_events.csv myminio/landing/sample_events.csv
+
+# Add ClickHouse connection to Airflow
+airflow-clickhouse-connection:
+	docker exec -i airflow-webserver airflow connections add 'clickhouse_connection' --conn-uri 'sqlite://default:default@clickhouse:9000'
 
 # Deploy and bring up Airflow
 deploy-airflow:
@@ -49,3 +58,15 @@ down-airflow-volumes:
 # Shutdown Ecosystem services and remove volumes
 down-ecosystem-volumes:
 	docker-compose -f docker-compose-ecosystem.yml down -v
+
+# Deploy and bring up ClickHouse
+deploy-clickhouse:
+	docker-compose -f docker-compose-clickhouse.yml up -d
+
+# Shutdown ClickHouse services
+down-clickhouse:
+	docker-compose -f docker-compose-clickhouse.yml down
+
+# Shutdown ClickHouse services and remove volumes
+down-clickhouse-volumes:
+	docker-compose -f docker-compose-clickhouse.yml down -v

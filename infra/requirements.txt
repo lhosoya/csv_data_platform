@@ -5,4 +5,8 @@ numpy
 sqlalchemy
 requests
 apache-airflow-providers-amazon
-
+apache-airflow-providers-common-sql
+airflow-clickhouse-plugin
+airflow-clickhouse-plugin[common.sql]
+clickhouse-driver
+clickhouse-driver[lz4,zstd]

@@ -17,23 +17,24 @@ services:
     networks:
       - trino-network
 
-  clickhouse:
-    image: clickhouse/clickhouse-server:latest
-    hostname: clickhouse
-    ports:
-      - '8123:8123' # HTTP interface
-      - '9002:9000' # Native TCP interface
-    environment:
-      - CLICKHOUSE_DB=default
-      - CLICKHOUSE_USER=default
-      - CLICKHOUSE_PASSWORD=default
-    volumes:
-      - clickhouse-data:/var/lib/clickhouse
-      #- ./clickhouse-s3.xml:/etc/clickhouse-server/config.d/s3.xml:ro
-      # - ./clickhouse-logs:/var/log/clickhouse-server # Activate if you want to see logs on your repo
-      - ./users.xml:/etc/clickhouse-server/users.d/users.xml:ro
-    networks:
-      - trino-network
+  # clickhouse:
+  #   image: clickhouse/clickhouse-server:latest
+  #   hostname: clickhouse
+  #   ports:
+  #     - '8123:8123' # HTTP interface
+  #     - '9002:9000' # Native TCP interface
+  #   environment:
+  #     - CLICKHOUSE_DB=default
+  #     - CLICKHOUSE_USER=default
+  #     - CLICKHOUSE_PASSWORD=default
+  #   volumes:
+  #     - clickhouse-data:/var/lib/clickhouse
+  #     #- ./clickhouse-s3.xml:/etc/clickhouse-server/config.d/s3.xml:ro
+  #     # - ./clickhouse-logs:/var/log/clickhouse-server # Activate if you want to see logs on your repo
+  #     - ./clickhouse_config/users.xml:/etc/clickhouse-server/users.d/users.xml:ro
+  #     #- ./clickhouse_config/s3_disk.xml:/etc/clickhouse-server/config.d/s3_disk.xml:ro
+  #   networks:
+  #     - trino-network
 
   minio:
     hostname: minio
