@@ -33,7 +33,7 @@ create-minio-buckets:
 
 # Add ClickHouse connection to Airflow
 airflow-clickhouse-connection:
-	docker exec -i airflow-webserver airflow connections add 'clickhouse_connection' --conn-uri 'sqlite://default:default@clickhouse:9000'
+	docker exec -i airflow-webserver airflow connections add 'clickhouse_connection' --conn-uri 'sqlite://default:default@clickhouse:9000' || true
 
 # Deploy and bring up Airflow
 deploy-airflow:
