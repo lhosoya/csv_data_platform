@@ -2,6 +2,9 @@
 utility/*
 ./utility
 utility/
+./ignore 
+ignore/
+ignore/*
 
 
 # use git add -u to stage changes to tracked files only
