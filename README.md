@@ -5,6 +5,9 @@ CSV data platform
 ```sudo apt-get update && sudo apt-get install -y make docker.io docker-compose```
 
 
+### Move to ./infra first!
+```cd infra```
+
 ### Build the airflow image, airflow is replacing a compute resource to mimic cloud resources.
 ```make build-docker```
 
