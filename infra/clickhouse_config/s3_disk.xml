@@ -1,0 +1,14 @@
+<!-- /etc/clickhouse-server/config.d/s3_disk.xml -->
+<yandex>
+    <storage_configuration>
+        <disks>
+            <minio_disk>
+                <type>s3</type>
+                <endpoint>http://minio:9000/lakehouse/</endpoint>
+                <access_key_id>minio</access_key_id>
+                <secret_access_key>minio123</secret_access_key>
+                <force_burstable_request_mode>true</force_burstable_request_mode>
+            </minio_disk>
+        </disks>
+    </storage_configuration>
+</yandex>
