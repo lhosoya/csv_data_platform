@@ -4,32 +4,36 @@ build-docker:
 	docker build -t myairflow:latest .
 
 # Full clean deployment of the ecosystem, Airflow, and MinIO buckets with the sample_events.csv data
-deploy-ecosystem-airflow-buckets:
+deploy-all:
 	make deploy-ecosystem
 	make deploy-airflow
 	make create-minio-buckets
 	make deploy-clickhouse
 	make airflow-clickhouse-connection
-
-# Shutdown of the deployed services
-down-ecosystem-airflow:
-	make down-airflow
-	make down-ecosystem
-	make down-clickhouse
-
+	
 # Shutdown and cleans all of the deployed services and volumes
-down-all:
+clean-all:
 	make down-airflow-volumes
 	make down-ecosystem-volumes
 	make down-clickhouse-volumes
+
+# Shutdown of the deployed services
+shutdown-all:
+	make down-airflow
+	make down-ecosystem
+	make down-clickhouse
 
 # Post-exec of minio to create the necessary buckets and upload sample data
 create-minio-buckets:
 	docker exec -i minio mc alias set myminio http://localhost:9000 minio minio123
 	docker exec -i minio mc mb -p myminio/landing || true
 	docker exec -i minio mc mb -p myminio/lakehouse || true
-	docker cp ../data/sample_events.csv minio:/tmp/sample_events.csv
-	docker exec -i minio mc cp /tmp/sample_events.csv myminio/landing/sample_events.csv
+	docker cp ../data/sample_events_1.csv minio:/tmp/sample_events_1.csv
+	docker cp ../data/sample_events_2.csv minio:/tmp/sample_events_2.csv
+	docker cp ../data/sample_events_3.csv minio:/tmp/sample_events_3.csv
+	docker exec -i minio mc cp /tmp/sample_events_1.csv myminio/landing/sample_events_1.csv
+	docker exec -i minio mc cp /tmp/sample_events_2.csv myminio/landing/sample_events_2.csv
+	docker exec -i minio mc cp /tmp/sample_events_3.csv myminio/landing/sample_events_3.csv
 
 # Add ClickHouse connection to Airflow
 airflow-clickhouse-connection:

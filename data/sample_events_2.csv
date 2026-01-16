@@ -1,0 +1,7 @@
+event_id,user_id,event_type,event_ts,plan_id,amount,source
+123,06d39bf4-0792-447b-b50e-9aa99d2e947c,subscription_started,2025-08-15T10:17:11.305006,test,39.0,
+1234,06d39bf4-0792-447b-b50e-9aa99d2e947c,subscription_canceled,2025-08-18T10:17:11.305006,,,
+222,11f32af8-1551-4265-9c48-a83c69e4afb8,subscription_canceled, 2025-06-01T10:17:11.305006,,,
+333,11f32af8-1551-4265-9c48-a83c69e4afb8,subscription_started, 2025-07-15T10:17:11.305006,enterprise,99.0,
+ 
+

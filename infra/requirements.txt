@@ -10,3 +10,4 @@ airflow-clickhouse-plugin
 airflow-clickhouse-plugin[common.sql]
 clickhouse-driver
 clickhouse-driver[lz4,zstd]
+delta-spark==3.2.0

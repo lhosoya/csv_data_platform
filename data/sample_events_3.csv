@@ -1,0 +1,4 @@
+event_id,user_id,event_type,event_ts,plan_id,amount,source
+444,11f32af8-1551-4265-9c48-a83c69e4afb8,subscription_canceled, 2025-07-16T10:17:11.305006,,,
+222,11f32af8-1551-4265-9c48-a83c69e4afb8,subscription_canceled, 2025-06-01T10:17:11.305006,,,
+

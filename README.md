@@ -1,19 +1,18 @@
 CSV data platform
 
 
-### Install make
-### Install docker
-### Install docker-compose
+### Install make, docker, docker-compose in ubuntu/wsl2
+```sudo apt-get update && sudo apt-get install -y make docker.io docker-compose```
 
 
-### Run docker-compose
-```docker-compose -f ./docker-compose-test.yml up -d ```
+### Build the airflow image, airflow is replacing a compute resource to mimic cloud resources.
+```make build-docker```
 
-### Delete everything /w volumes
-```docker-compose -f ./docker-compose-test.yml down -v ```
+### Deploy everything + data and connections
+```make deploy-all```
 
-### Delete everything /wo the volumes
-```docker-compose -f ./docker-compose-test.yml down ```
+### Delete everything /w the volumes
+```make clean-all ```
 
 ### Case maths
 #### 1M events
@@ -32,13 +31,26 @@ CSV data platform
 | 10M events / 24h      | 416667 events/h     |
 
 
->#### 100M events
+#### 100M events - Not mentioned
 | Events/day  | Events/time |
 | ------------- |:-------------:|
 | 100M events / 86400s      | 1158 events/s    |
 | 100M events / 1440min      | 69445 events/min     |
 | 100M events / 24h      | 4166667 events/h    |
 
+Case review assumptions:
 
-If up to 10M events/day -> partition by date may be enough
-I equal or higher than 100M events/day -> partition by date + hour may perform better for faster analysis (minute-by-minute, second-by-second)
+- If up to 10M events/day -> partition by date may be enough
+- I equal or higher than 100M events/day -> partition by date + hour may perform better for faster analysis (minute-by-minute, second-by-second)
+- **Batch vs streaming** Batch is a better alternative due to analytics and upsert information to be processed/reprocessed, streaming is only possible if going straight to warehouse + presentation layer in milliseconds/seconds of data availability.
+- Availability and Consistency are the key for this since Partition tolerance isn't necessary for this case.
+- Orchestration, lineage & observability -> Using Airflow, Clickhouse & Metabase to understand and deep-dive metadata.
+- Duplication removal done at code level.
+
+Quality:
+- Tests are enforced during silver layer, since the raw layer should be getting messages from the topic/sink/landing and data can be late.
+- SLI/SLO freshness is determined by the business need (Airflow schedule or API trigger, could also be a stream scenario). Pipeline success rate is by data available, but maintaining idempotency and redundancy on bronze layer.
+- Alerting -> Done at Metabase level &/or Airflow level during pipeline execution.
+
+Scalability:
+- Case is already planned to scale, except removing pipeline runtime from Airflow Worker to a specific clustered environment (Glue, Databricks, Snowflake, etc.)
