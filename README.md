@@ -54,3 +54,18 @@ Quality:
 
 Scalability:
 - Case is already planned to scale, except removing pipeline runtime from Airflow Worker to a specific clustered environment (Glue, Databricks, Snowflake, etc.)
+
+
+Focuses:
+- Scaling
+- Deploy
+- Usage
+- Idempotency
+- Analytics
+
+Current Holes:
+- Airflow worker, no clustered runtimes.
+- All in docker, in a PROD/DEV environment to be scalable.
+- No integration with hive-metastores (glue, athena, databricks, snowflake metastores), which means working with Clickhouse/Trino/Minio is a little more difficult, especially when building as delta metadata.
+- Airflow executions/tasks breakdown, either by notebook or better tasks.
+- DRY, KIS -> lacked a bit due to simplicity over being a clean execution.
