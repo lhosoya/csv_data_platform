@@ -26,10 +26,13 @@ CSV data platform
 ### Credentials user/pw/conn:
 > **Airflow**
  >> airflow airflow http://localhost:8080
+
 > **Clickhouse**
  >> default default http://localhost:8123 or http://clickhouse:8123
+
 > **Minio**
  >> minio minio123 http://localhost:9001 (9000) or http://minio:9000
+ 
 > **Kafka**
  >> http://kafka:9092 (docker network) or http://localhost:9094 (external-offset explorer tool)
 
