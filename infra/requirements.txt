@@ -6,7 +6,7 @@ sqlalchemy
 requests
 apache-airflow-providers-amazon
 apache-airflow-providers-common-sql
-apache-airflow-providers-standard
+apache-airflow-providers-standard==1.0.0 #this version is needed to avoid conflicts with other providers
 airflow-clickhouse-plugin
 airflow-clickhouse-plugin[common.sql]
 clickhouse-driver

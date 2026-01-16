@@ -14,6 +14,7 @@ with DAG(
         task_id='kafka',
         trigger_dag_id='producer_dag',
         conf={"event_no": "1"},
+        wait_for_completion=True
             
     )
     
@@ -22,6 +23,7 @@ with DAG(
         trigger_dag_id='lakehouse_kafka_to_bronze',
         conf={"table_path": "s3a://lakehouse/bronze/final_events"},
         poke_interval=5,
+        wait_for_completion=True
     )
     
     bronze_to_silver = TriggerDagRunOperator(
@@ -29,6 +31,7 @@ with DAG(
         trigger_dag_id='lakehouse_bronze_to_silver',
         conf={"bronze_path": "s3a://lakehouse/bronze/final_events", "silver_path": "s3a://lakehouse/silver/final_events"},
         poke_interval=5,
+        wait_for_completion=True
     )
     
     kafka >> kafka_to_bronze >> bronze_to_silver
