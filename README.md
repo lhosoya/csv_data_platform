@@ -32,7 +32,7 @@ CSV data platform
 
 > **Minio**
  >> minio minio123 http://localhost:9001 (9000) or http://minio:9000
- 
+
 > **Kafka**
  >> http://kafka:9092 (docker network) or http://localhost:9094 (external-offset explorer tool)
 
@@ -92,5 +92,5 @@ Current Holes:
 - No integration with hive-metastores (glue, athena, databricks, snowflake metastores), which means working with Clickhouse/Trino/Minio is a little more difficult, especially when building as delta metadata.
 - Airflow executions/tasks breakdown, either by notebook or better tasks.
 - DRY, KIS -> lacked a bit due to simplicity over being a clean execution.
-
+- Secrets/Passwords! If used in PROD environments, tools like Terraform & vault/secrets manager/IAM would really help on organizing and keep security information up to standards.
 
