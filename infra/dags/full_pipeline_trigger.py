@@ -7,7 +7,8 @@ with DAG(
     dag_id='kafka_to_lakehouse_full_pipeline_trigger',
     start_date=datetime(2023, 1, 1),
     schedule_interval=None, 
-    catchup=False
+    catchup=False,
+    is_paused_upon_creation=False
 ) as dag:
 
     kafka = TriggerDagRunOperator(

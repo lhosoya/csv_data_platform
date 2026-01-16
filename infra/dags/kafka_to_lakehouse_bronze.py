@@ -116,7 +116,9 @@ with DAG(
     schedule=None,
     params={
         "table_path": Param(default='s3a://lakehouse/bronze/final_events', type="string")
-    }
+    },
+    catchup=False,
+    is_paused_upon_creation=False
 ) as dag:
     table_path = '{{ params.table_path }}'
     to_bronze = pipeline(table_path)

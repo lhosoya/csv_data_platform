@@ -68,7 +68,9 @@ with DAG(
     schedule=None,
     params={
         "event_no": Param(default='1', type="string")
-    }
+    },
+    catchup=False,
+    is_paused_upon_creation=False
 ) as dag:
     event_no = '{{ params.event_no }}'
     produce = read_csv_data(event_no)

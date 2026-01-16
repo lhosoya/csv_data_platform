@@ -142,7 +142,9 @@ with DAG(
     params={
         "bronze_path": Param(default='s3a://lakehouse/bronze/final_events', type="string"),
         "silver_path": Param(default='s3a://lakehouse/silver/final_events', type="string")
-    }
+    },
+    catchup=False,
+    is_paused_upon_creation=False
 ) as dag:
     bronze_path = '{{ params.bronze_path }}'
     silver_path = '{{ params.silver_path }}'
