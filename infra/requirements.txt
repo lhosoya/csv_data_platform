@@ -6,6 +6,7 @@ sqlalchemy
 requests
 apache-airflow-providers-amazon
 apache-airflow-providers-common-sql
+apache-airflow-providers-standard
 airflow-clickhouse-plugin
 airflow-clickhouse-plugin[common.sql]
 clickhouse-driver

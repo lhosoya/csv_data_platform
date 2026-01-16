@@ -1,6 +1,12 @@
 CSV data platform
 
 
+### High-level Architecture
+<img src="./img/1.png"  width="700" height="600">
+
+<img src="./img/2.png"  width="700" height="500">
+
+
 ### Install make, docker, docker-compose in ubuntu/wsl2
 ```sudo apt-get update && sudo apt-get install -y make docker.io docker-compose```
 
@@ -72,3 +78,5 @@ Current Holes:
 - No integration with hive-metastores (glue, athena, databricks, snowflake metastores), which means working with Clickhouse/Trino/Minio is a little more difficult, especially when building as delta metadata.
 - Airflow executions/tasks breakdown, either by notebook or better tasks.
 - DRY, KIS -> lacked a bit due to simplicity over being a clean execution.
+
+
